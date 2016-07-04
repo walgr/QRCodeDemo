@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">二维码扫描</string>
+    <string name="dialog_title">警告</string>
+    <string name="dialog_message">当前摄像头不可用,请退出</string>
+    <string name="dialog_button1">取消</string>
+    <string name="dialog_button2">确定</string>
+    <string name="scan_text_point">将取景框对准二维码 即可自动扫描</string>
 </resources>

@@ -14,9 +14,11 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.wpf.qrcodescanview.R;
+
 /**
- * Created by 王朋飞 on 6-20-0020.
- * 扫描框
+ * Created by wpf on 6-20-0020.
+ *
  */
 
 class ViewfinderView extends SurfaceView implements
@@ -24,13 +26,13 @@ class ViewfinderView extends SurfaceView implements
 
     private SurfaceHolder surfaceHolder;
     private int mWidget = 0, mHeight = 0,mDown = 1;
-    //扫描区域框
     private Rect mRect;
     private Rect mRect_Line;
     private Paint mPaint_CenterFK = new Paint();
     private Paint mPaint_CenterBJ = new Paint();
     private Paint mPaint_CenterOther = new Paint();
     private TextPaint mPaint_Text = new TextPaint();
+    private int textSize = getResources().getInteger(R.integer.size);;
     private boolean isDestroyed;
 
     public ViewfinderView(Context context) {
@@ -72,7 +74,7 @@ class ViewfinderView extends SurfaceView implements
         mPaint_CenterOther.setAlpha(64);
 
         mPaint_Text.setColor(Color.WHITE);
-        mPaint_Text.setTextSize(64);
+        mPaint_Text.setTextSize(textSize);
         mPaint_Text.setTextAlign(Paint.Align.CENTER);
     }
 
@@ -150,7 +152,6 @@ class ViewfinderView extends SurfaceView implements
     private void drawOther(Canvas canvas) {
         Path path = new Path();
 
-        //上
         path.lineTo(0, 0);
         path.lineTo(mWidget, 0);
         path.lineTo(mWidget, mRect.top);
@@ -158,7 +159,6 @@ class ViewfinderView extends SurfaceView implements
         path.lineTo(0, 0);
         path.close();
 
-        //右
         path.moveTo(mRect.right, mRect.top);
         path.lineTo(mWidget, mRect.top);
         path.lineTo(mWidget, mRect.bottom);
@@ -166,7 +166,6 @@ class ViewfinderView extends SurfaceView implements
         path.lineTo(mRect.right, mRect.top);
         path.close();
 
-        //下
         path.moveTo(0, mRect.bottom);
         path.lineTo(mWidget, mRect.bottom);
         path.lineTo(mWidget, mHeight);
@@ -174,7 +173,6 @@ class ViewfinderView extends SurfaceView implements
         path.lineTo(0, mRect.bottom);
         path.close();
 
-        //左
         path.moveTo(0, mRect.top);
         path.lineTo(mRect.left, mRect.top);
         path.lineTo(mRect.left, mRect.bottom);
@@ -186,7 +184,7 @@ class ViewfinderView extends SurfaceView implements
     }
 
     private void drawText(Canvas canvas) {
-        String pointStr = "将取景框对准二维码 即可自动扫描";
+        String pointStr = getResources().getString(R.string.scan_text_point);
         int textLength = 64 * pointStr.split(" ")[0].length();
         StaticLayout layout = new StaticLayout(pointStr, mPaint_Text, textLength, Layout.Alignment.ALIGN_NORMAL, 1.0F, 0.0F, true);
         canvas.translate(mRect.centerX(),

@@ -20,20 +20,18 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Created by 王朋飞 on 6-20-0020.
- * 摄像头View---5.0以下
+ * Created by wpf on 6-20-0020.
+ * CameraView---5.0 down
  */
 
 public abstract class CameraView extends SurfaceView implements
         SurfaceHolder.Callback2 ,
-        Camera.PreviewCallback ,
-        Camera.AutoFocusCallback {
+        Camera.PreviewCallback {
 
     private SurfaceHolder surfaceHolder;
     private Camera camera;
     private Camera.Parameters parameters;
     private Camera.Size size;
-    private boolean isFocus;
     private QRCodeReader qrCodeReader = new QRCodeReader();
 
     public CameraView(Context context) {
@@ -55,23 +53,21 @@ public abstract class CameraView extends SurfaceView implements
     }
 
     private void initCamera() {
-        camera = Camera.open();
-        if (camera == null) return;
         try {
+            camera = Camera.open();
+            if (camera == null) return;
             setParameters();
             camera.setPreviewDisplay(surfaceHolder);
+            camera.setPreviewCallback(this);
+            camera.startPreview();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        camera.setPreviewCallback(this);
-        camera.autoFocus(this);
-        camera.startPreview();
     }
 
     private void setParameters() {
         parameters = camera.getParameters();
         size = getSupportedPreviewSizes();
-        parameters.setRotation(90);
         parameters.setPictureSize(size.width,size.height);
         camera.setParameters(parameters);
     }
@@ -139,11 +135,6 @@ public abstract class CameraView extends SurfaceView implements
     @Override
     public void onPreviewFrame(byte[] bytes, Camera camera) {
         scan(bytes);
-    }
-
-    @Override
-    public void onAutoFocus(boolean b, Camera camera) {
-
     }
 
     public abstract void onSuccess(String result, Bitmap bitmap);

@@ -9,7 +9,7 @@ import com.wpf.qrcodescanview.Listener.OnFinishListener;
 import com.wpf.qrcodescanview.View.ScanQRCode;
 
 /**
- * onActivityResult 返回结果Bundle字段
+ * onActivityResult
  * ResultString->Result
  * Bitmap->Bitmap
  */

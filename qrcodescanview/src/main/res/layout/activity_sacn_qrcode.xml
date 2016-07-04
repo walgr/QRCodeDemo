@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.wpf.cameraview.ScanQRCodeActivity">
+    tools:context="com.wpf.qrcodescanview.ScanQRCodeActivity">
 
-    <com.wpf.cameraview.View.ScanQRCode
+    <com.wpf.qrcodescanview.View.ScanQRCode
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/cameraView"/>

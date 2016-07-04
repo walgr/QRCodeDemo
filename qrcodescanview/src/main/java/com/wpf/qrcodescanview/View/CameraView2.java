@@ -38,6 +38,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
+import com.wpf.qrcodescanview.R;
 import com.wpf.qrcodescanview.View.Util.CompareSizesByArea;
 import com.wpf.requestpermission.RequestPermission;
 
@@ -46,8 +47,8 @@ import java.util.Arrays;
 import java.util.Collections;
 
 /**
- * Created by 王朋飞 on 6-20-0020.
- * 摄像头View---5.0以上
+ * Created by wpf on 6-20-0020.
+ * CameraView---5.0 up
  */
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -259,12 +260,13 @@ abstract class CameraView2 extends SurfaceView implements
         } catch (CameraAccessException | IllegalArgumentException e) {
             e.printStackTrace();
             new AlertDialog.Builder(getContext())
-                    .setMessage("当前摄像头不可用,请退出")
-                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ((AppCompatActivity)getContext()).finish();
-                        }
+                    .setMessage(R.string.dialog_message)
+                    .setPositiveButton(R.string.dialog_button2,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    ((AppCompatActivity)getContext()).finish();
+                                }
                     }).show();
         }
         return largest;

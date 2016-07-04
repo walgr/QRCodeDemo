@@ -11,8 +11,8 @@ import android.widget.FrameLayout;
 import com.wpf.qrcodescanview.Listener.OnFinishListener;
 
 /**
- * Created by 王朋飞 on 6-20-0020.
- * 二维码扫描界面
+ * Created by wpf on 6-20-0020.
+ * QRCodeScanView
  */
 
 public class ScanQRCode extends FrameLayout {
