@@ -185,7 +185,7 @@ class ViewfinderView extends SurfaceView implements
 
     private void drawText(Canvas canvas) {
         String pointStr = getResources().getString(R.string.scan_text_point);
-        int textLength = 64 * pointStr.split(" ")[0].length();
+        int textLength = textSize * pointStr.split(" ")[0].length();
         StaticLayout layout = new StaticLayout(pointStr, mPaint_Text, textLength, Layout.Alignment.ALIGN_NORMAL, 1.0F, 0.0F, true);
         canvas.translate(mRect.centerX(),
                 mRect.centerY() + mRect.height() / 2 + mHeight / 20);

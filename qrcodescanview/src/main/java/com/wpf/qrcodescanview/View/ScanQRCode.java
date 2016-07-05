@@ -38,13 +38,12 @@ public class ScanQRCode extends FrameLayout {
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            cameraView2 = new CameraView2(context, attrs, defStyleAttr) {
+            addView(cameraView2 = new CameraView2(context, attrs, defStyleAttr) {
                 @Override
                 public void onSuccess(String result, Bitmap bitmap) {
                     if(onFinishListener != null) onFinishListener.onFinish(result,bitmap);
                 }
-            };
-            addView(cameraView2);
+            });
         } else {
             addView(cameraView = new CameraView(context, attrs, defStyleAttr) {
                 @Override

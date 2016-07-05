@@ -26,6 +26,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -309,8 +310,7 @@ abstract class CameraView2 extends SurfaceView implements
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         requestPermission = new RequestPermission((AppCompatActivity) getContext(),
-                new String[]{Manifest.permission.CAMERA,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1) {
+                new String[]{Manifest.permission.CAMERA}, 1) {
 
             @Override
             public void onSuccess() {
@@ -319,7 +319,6 @@ abstract class CameraView2 extends SurfaceView implements
 
             @Override
             public void onFail(String[] strings) {
-
             }
         };
     }
