@@ -8,12 +8,6 @@ import android.os.Bundle;
 import com.wpf.qrcodescanview.Listener.OnFinishListener;
 import com.wpf.qrcodescanview.View.ScanQRCode;
 
-/**
- * onActivityResult
- * ResultString->Result
- * Bitmap->Bitmap
- */
-
 public class ScanQRCodeActivity extends AppCompatActivity implements
         OnFinishListener {
 
