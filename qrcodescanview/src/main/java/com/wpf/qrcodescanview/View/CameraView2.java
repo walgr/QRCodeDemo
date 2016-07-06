@@ -1,17 +1,18 @@
 package com.wpf.qrcodescanview.View;
 
+
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraDevice.StateCallback;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
@@ -26,7 +27,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Size;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -65,7 +65,7 @@ abstract class CameraView2 extends SurfaceView implements
     private CameraCaptureSession mSession;
     private QRCodeReader qrCodeReader = new QRCodeReader();
     private ImageReader mImageReader;
-    private CameraDevice.StateCallback stateCallback = new StateCallback() {
+    private CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice cameraDevice) {
             mCameraDevice = cameraDevice;
@@ -123,28 +123,6 @@ abstract class CameraView2 extends SurfaceView implements
             };
 
     private void scan(ImageReader imageReader) {
-        Image image = imageReader.acquireLatestImage();
-        if (ScanQRCode.mRect != null) {
-            if (image == null) return;
-            Image.Plane[] planes = image.getPlanes();
-            if (planes == null) return;
-            if (planes.length >= 1 && planes[0] == null) return;
-            ByteBuffer byteBuffer = planes[0].getBuffer();
-            byte[] data = new byte[byteBuffer.capacity()];
-            byteBuffer.get(data);
-            int imageWidth = image.getWidth(), imageHeight = image.getHeight();
-            int left = ScanQRCode.mRect.left * imageWidth / getWidth();
-            int top = ScanQRCode.mRect.top * imageHeight / getHeight();
-            int width = (int) (ScanQRCode.mRect.width() * imageWidth * 1.5) / getWidth();
-            int height = (int) (ScanQRCode.mRect.height() * imageHeight * 1.5) / getHeight();
-            PlanarYUVLuminanceSource source =
-                    new PlanarYUVLuminanceSource(data, imageWidth, imageHeight,
-                            left, top, width, height, false);
-            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-            String rawResult = getDecodeResult(bitmap);
-            if (!rawResult.isEmpty()) onSuccess(rawResult, null);
-        }
-        image.close();
         try {
             if (mSession != null) {
                 previewBuilder.removeTarget(mImageReader.getSurface());
@@ -155,6 +133,29 @@ abstract class CameraView2 extends SurfaceView implements
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+        Image image = imageReader.acquireLatestImage();
+        if (ScanQRCode.mRect != null) {
+            if (image == null) return;
+            Image.Plane[] planes = image.getPlanes();
+            if (planes == null) return;
+            if (planes.length >= 1 && planes[0] == null) return;
+            ByteBuffer byteBuffer = planes[0].getBuffer();
+            byte[] data = new byte[byteBuffer.capacity()];
+            byteBuffer.get(data);
+
+            int imageWidth = image.getWidth(), imageHeight = image.getHeight();
+            int left = (imageWidth - ScanQRCode.mRect.width())/2;
+            int top = (imageHeight - ScanQRCode.mRect.height())/2;
+            int width = ScanQRCode.mRect.width();
+            int height = ScanQRCode.mRect.height();
+            PlanarYUVLuminanceSource source =
+                    new PlanarYUVLuminanceSource(data, imageWidth, imageHeight,
+                            left, top, width,height, false);
+            BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+            String rawResult = getDecodeResult(bitmap);
+            if (!rawResult.isEmpty()) onSuccess(rawResult, null);
+        }
+        image.close();
     }
 
     private String getDecodeResult(BinaryBitmap bitmap) {
@@ -167,27 +168,6 @@ abstract class CameraView2 extends SurfaceView implements
         }
         return rawResult == null ? "" : rawResult.getText();
     }
-
-//    private Bitmap getBitmap(byte[] yuvData,int dataWidth,int left,int top,PlanarYUVLuminanceSource source) {
-//        int width = getWidth();
-//        int height = getHeight();
-//        int[] pixels = new int[width * height];
-//        byte[] yuv = yuvData;
-//        int inputOffset = top * dataWidth + left;
-//
-//        for (int y = 0; y < height; y++) {
-//            int outputOffset = y * width;
-//            for (int x = 0; x < width; x++) {
-//                int grey = yuv[inputOffset + x] & 0xff;
-//                pixels[outputOffset + x] = 0xFF000000 | (grey * 0x00010101);
-//            }
-//            inputOffset += dataWidth;
-//        }
-//
-//        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-//        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-//        return bitmap;
-//    }
 
     public CameraView2(Context context) {
         this(context, null);
@@ -225,7 +205,18 @@ abstract class CameraView2 extends SurfaceView implements
         try {
             mCameraManager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
             Size imageSize = getImageSize();
-            if (imageSize == null) return;
+            if (imageSize == null) {
+                new AlertDialog.Builder(getContext())
+                        .setMessage(R.string.dialog_message)
+                        .setPositiveButton(R.string.dialog_button2,
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        ((AppCompatActivity)getContext()).finish();
+                                    }
+                                }).show();
+                return;
+            }
             mImageReader = ImageReader.newInstance(imageSize.getWidth(), imageSize.getHeight(),
                     ImageFormat.YUV_420_888, 7);
             mImageReader.setOnImageAvailableListener(onImageAvailableListener, handler);
@@ -240,7 +231,6 @@ abstract class CameraView2 extends SurfaceView implements
         try {
             previewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             previewBuilder.addTarget(surfaceHolder.getSurface());
-            previewBuilder.set(CaptureRequest.JPEG_ORIENTATION,90);
             mCameraDevice.createCaptureSession(
                     Arrays.asList(surfaceHolder.getSurface(),mImageReader.getSurface()),
                     mSessionPreviewStateCallback, handler);
@@ -258,17 +248,11 @@ abstract class CameraView2 extends SurfaceView implements
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
             largest = Collections.max(Arrays.asList(map.getOutputSizes(ImageFormat.YUV_420_888)), new CompareSizesByArea());
+            int orientation = getResources().getConfiguration().orientation;
+            if (orientation == Configuration.ORIENTATION_PORTRAIT)
+                largest = new Size(largest.getHeight(),largest.getWidth());
         } catch (CameraAccessException | IllegalArgumentException e) {
             e.printStackTrace();
-            new AlertDialog.Builder(getContext())
-                    .setMessage(R.string.dialog_message)
-                    .setPositiveButton(R.string.dialog_button2,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    ((AppCompatActivity)getContext()).finish();
-                                }
-                    }).show();
         }
         return largest;
     }

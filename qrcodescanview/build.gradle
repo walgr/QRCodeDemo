@@ -29,7 +29,7 @@ dependencies {
 }
 
 
-version = "0.8"
+version = "0.8.1"
 group = "com.wpf.qrcodescanview"
 def siteUrl = 'https://github.com/wazsj/QRCodeDemo'
 def gitUrl = 'https://github.com/wazsj/QRCodeDemo.git'

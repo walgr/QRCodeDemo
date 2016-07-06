@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -9,6 +10,13 @@
     tools:context="com.wpf.camera.MainActivity"
     android:gravity="center">
 
+    <TextView
+        android:text="TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:gravity="center" />
+
     <Button
         android:text="启动相机"
         android:layout_width="wrap_content"
@@ -16,5 +24,7 @@
         android:id="@+id/button"
         android:textColor="@color/colorPrimary"
         android:textColorHighlight="@color/colorPrimary"
-        android:textColorHint="?android:attr/textColorHint" />
+        android:textColorHint="?android:attr/textColorHint"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

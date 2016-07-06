@@ -1,13 +1,18 @@
 package com.wpf.qrcodescanview;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.wpf.qrcodescanview.Listener.OnFinishListener;
 import com.wpf.qrcodescanview.View.ScanQRCode;
 
+/**
+ * 扫描二维码Activity
+ * 返回结果 ResultString
+ */
 public class ScanQRCodeActivity extends AppCompatActivity implements
         OnFinishListener {
 
@@ -28,10 +33,13 @@ public class ScanQRCodeActivity extends AppCompatActivity implements
 
     @Override
     public void onFinish(String result, Bitmap bitmap) {
-        Bundle bundle = new Bundle();
-        bundle.putString("ResultString",result);
-        bundle.putParcelable("Bitmap",bitmap);
-        setResult(RESULT_OK,getIntent().putExtra("data",bundle));
+        Intent intent = getIntent();
+        intent.putExtra("ResultString",result);
+        setResult(RESULT_OK,intent);
+//        Bundle bundle = new Bundle();
+//        bundle.putString("ResultString",result);
+//        bundle.putParcelable("Bitmap",bitmap);
+//        setResult(RESULT_OK,getIntent().putExtra("data",bundle));
         finish();
     }
 }
