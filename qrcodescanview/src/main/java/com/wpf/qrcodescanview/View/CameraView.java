@@ -80,10 +80,10 @@ public abstract class CameraView extends SurfaceView implements
     private void scan(byte[] data) {
         if (ScanQRCode.mRect != null) {
             int imageWidth = size.width, imageHeight = size.height;
-            int left = ScanQRCode.mRect.left * imageWidth / getWidth();
-            int top = ScanQRCode.mRect.top * imageHeight / getHeight();
-            int width = (int) (ScanQRCode.mRect.width() * imageWidth * 1.5) / getWidth();
-            int height = (int) (ScanQRCode.mRect.height() * imageHeight * 1.5) / getHeight();
+            int left = (imageWidth - ScanQRCode.mRect.width())/2;
+            int top = (imageHeight - ScanQRCode.mRect.height())/2;
+            int width = ScanQRCode.mRect.width();
+            int height = ScanQRCode.mRect.height();
             PlanarYUVLuminanceSource source =
                     new PlanarYUVLuminanceSource(data, imageWidth, imageHeight,
                             left, top, width, height, false);
