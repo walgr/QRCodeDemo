@@ -7,15 +7,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.wpf.camera.MainActivity"
+    tools:context="com.wpf.qrcodedemo.MainActivity"
     android:gravity="center">
 
     <TextView
-        android:text="TextView"
+        android:text="解析的字符串"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView"
-        android:gravity="center" />
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageView"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp" />
 
     <Button
         android:text="启动相机"
