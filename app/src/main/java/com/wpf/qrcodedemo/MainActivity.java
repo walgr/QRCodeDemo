@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -14,16 +12,18 @@ import android.widget.TextView;
 
 import com.wpf.qrcodescanview.CreateQRImage;
 import com.wpf.qrcodescanview.ScanQRCodeActivity;
-import com.wpf.requestpermission.RequestPermission;
+import com.wpf.requestpermission.RequestPermissionActivity;
+import com.wpf.requestpermission.RequestResult;
+
+import static com.wpf.qrcodescanview.CreateQRImage.saveBitmapToSD;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends RequestPermissionActivity {
 
     private int requestCode = 100;
     private TextView textView;
     private ImageView imageView;
     private Button button;
-    private RequestPermission requestPermission;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +40,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void request(final Bitmap bitmap) {
+        request(this, Manifest.permission.WRITE_EXTERNAL_STORAGE, 1, new RequestResult() {
+            @Override
+            public void onSuccess() {
+                saveBitmapToSD(bitmap, Environment.getExternalStorageDirectory().getPath()+"/","QRCode.jpg");
+            }
+
+            @Override
+            public void onFail(String[] failList) {
+
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -48,26 +62,11 @@ public class MainActivity extends AppCompatActivity {
             textView.setText(result);
             new CreateQRImage(result) {
                 @Override
-                public void onFinish(final Bitmap bitmap) {
+                public void onFinish(Bitmap bitmap) {
                     imageView.setImageBitmap(bitmap);
-                    requestPermission = new RequestPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE,1) {
-                        @Override
-                        public void onSuccess() {
-                            saveBitmapToSD(bitmap, Environment.getExternalStorageDirectory().getPath()+"/","1.jpg");
-                        }
-
-                        @Override
-                        public void onFail(String[] failList) {
-
-                        }
-                    };
+                    if(bitmap != null) request(bitmap);
                 }
             };
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        requestPermission.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
 }

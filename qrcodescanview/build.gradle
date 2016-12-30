@@ -3,13 +3,13 @@ apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.0'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.1'
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 24
-        versionName "0.8"
-        versionCode 20160704
+        targetSdkVersion 25
+        versionName "1.0.0"
+        versionCode 20161230
     }
     buildTypes {
         release {
@@ -23,13 +23,12 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.google.zxing:core:3.2.1'
-    compile 'com.wpf.requestpermission:requestpermission:1.0.1'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.google.zxing:core:3.3.0'
+    compile 'com.wpf.requestpermission:requestpermission:1.1.1'
 }
 
-
-version = "0.9.5"
+version = "1.0.0"
 group = "com.wpf.qrcodescanview"
 def siteUrl = 'https://github.com/wazsj/QRCodeDemo'
 def gitUrl = 'https://github.com/wazsj/QRCodeDemo.git'
@@ -72,8 +71,8 @@ task sourcesJar(type: Jar) {
 
 task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
-    classpath += project.files(configurations.compile.files,android.getBootClasspath().join(File.pathSeparator))
-//    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+//    classpath += project.files(configurations.compile.files,android.getBootClasspath().join(File.pathSeparator))
     options.encoding = "utf-8"
 }
 

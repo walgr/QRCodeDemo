@@ -15,8 +15,7 @@ import java.util.Hashtable;
 
 public abstract class CreateQRImage extends AsyncTask<String,Integer,Bitmap> {
 
-	private String url;
-	private int QR_WIDTH = 512, QR_HEIGHT = 512;
+	private int QR_WIDTH = 256, QR_HEIGHT = 256;
 
 	private Bitmap createQRImage(String url, int QR_WIDTH, int QR_HEIGHT) {
 		Bitmap bitmap = null;
@@ -44,7 +43,6 @@ public abstract class CreateQRImage extends AsyncTask<String,Integer,Bitmap> {
 	}
 
 	protected CreateQRImage(String url,int QR_WIDTH,int QR_HEIGHT) {
-		this.url = url;
 		this.QR_WIDTH = QR_WIDTH;
 		this.QR_HEIGHT = QR_HEIGHT;
 		this.execute(url);

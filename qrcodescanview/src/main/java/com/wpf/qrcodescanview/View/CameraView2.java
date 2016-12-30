@@ -42,6 +42,7 @@ import com.google.zxing.qrcode.QRCodeReader;
 import com.wpf.qrcodescanview.R;
 import com.wpf.qrcodescanview.View.Util.CompareSizesByArea;
 import com.wpf.requestpermission.RequestPermission;
+import com.wpf.requestpermission.RequestResult;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -56,7 +57,6 @@ import java.util.Collections;
 abstract class CameraView2 extends SurfaceView implements
         SurfaceHolder.Callback2 {
 
-    private RequestPermission requestPermission;
     private SurfaceHolder surfaceHolder;
     private CameraManager mCameraManager;
     private CameraDevice mCameraDevice;
@@ -122,17 +122,9 @@ abstract class CameraView2 extends SurfaceView implements
                 }
             };
 
+
+    private int imageWidth = 0,imageHeight,left,top,width,height;
     private void scan(ImageReader imageReader) {
-        try {
-            if (mSession != null) {
-                previewBuilder.removeTarget(mImageReader.getSurface());
-                mSession.setRepeatingRequest(previewBuilder.build(),
-                        new CameraCaptureSession.CaptureCallback() {
-                        }, handler);
-            }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
         Image image = imageReader.acquireLatestImage();
         if (ScanQRCode.mRect != null) {
             if (image == null) return;
@@ -143,11 +135,14 @@ abstract class CameraView2 extends SurfaceView implements
             byte[] data = new byte[byteBuffer.capacity()];
             byteBuffer.get(data);
 
-            int imageWidth = image.getWidth(), imageHeight = image.getHeight();
-            int left = (imageWidth - ScanQRCode.mRect.width())/2;
-            int top = (imageHeight - ScanQRCode.mRect.height())/2;
-            int width = ScanQRCode.mRect.width();
-            int height = ScanQRCode.mRect.height();
+            if(imageWidth == 0) {
+                imageWidth = image.getWidth();
+                imageHeight = image.getHeight();
+                left = (imageWidth - ScanQRCode.mRect.width()) / 2;
+                top = (imageHeight - ScanQRCode.mRect.height()) / 2;
+                width = ScanQRCode.mRect.width();
+                height = ScanQRCode.mRect.height();
+            }
             PlanarYUVLuminanceSource source =
                     new PlanarYUVLuminanceSource(data, imageWidth, imageHeight,
                             left, top, width,height, false);
@@ -231,10 +226,10 @@ abstract class CameraView2 extends SurfaceView implements
         try {
             previewBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
             previewBuilder.addTarget(surfaceHolder.getSurface());
+            previewBuilder.addTarget(mImageReader.getSurface());
             mCameraDevice.createCaptureSession(
                     Arrays.asList(surfaceHolder.getSurface(),mImageReader.getSurface()),
                     mSessionPreviewStateCallback, handler);
-            scamImage();
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -293,18 +288,18 @@ abstract class CameraView2 extends SurfaceView implements
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        requestPermission = new RequestPermission((AppCompatActivity) getContext(),
-                new String[]{Manifest.permission.CAMERA}, 1) {
+        RequestPermission.request((AppCompatActivity) getContext(),
+                new String[]{Manifest.permission.CAMERA}, 1, new RequestResult() {
+                    @Override
+                    public void onSuccess() {
+                        initCamera();
+                    }
 
-            @Override
-            public void onSuccess() {
-                initCamera();
-            }
+                    @Override
+                    public void onFail(String[] failList) {
 
-            @Override
-            public void onFail(String[] strings) {
-            }
-        };
+                    }
+                });
     }
 
     @Override
@@ -318,7 +313,7 @@ abstract class CameraView2 extends SurfaceView implements
     }
 
     void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        requestPermission.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        RequestPermission.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
 
     public abstract void onSuccess(String result, Bitmap bitmap);
