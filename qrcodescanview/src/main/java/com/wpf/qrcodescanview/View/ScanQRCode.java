@@ -52,12 +52,12 @@ public class ScanQRCode extends FrameLayout {
                 }
             });
         }
-        addView(viewfinderView == null ?
-                new ViewfinderView(context, attrs, defStyleAttr): viewfinderView);
+        addView(viewfinderView == null ? new ViewfinderView(context, attrs, defStyleAttr): viewfinderView);
     }
 
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        cameraView2.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        if(cameraView != null) cameraView.onRequestPermissionsResult(requestCode,permissions,grantResults);
+        if(cameraView2 != null) cameraView2.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
 
     public CameraView getCameraView() {

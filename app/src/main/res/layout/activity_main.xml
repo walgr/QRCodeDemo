@@ -27,7 +27,7 @@
         android:layout_marginBottom="16dp" />
 
     <Button
-        android:text="启动相机"
+        android:text="二维码扫描"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/button"

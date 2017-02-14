@@ -1,8 +1,13 @@
 package com.wpf.qrcodescanview.View;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -15,6 +20,8 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
+import com.wpf.requestpermission.RequestPermission;
+import com.wpf.requestpermission.RequestResult;
 
 import java.io.IOException;
 import java.util.List;
@@ -53,10 +60,13 @@ public abstract class CameraView extends SurfaceView implements
     }
 
     private void initCamera() {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) return;
         try {
             camera = Camera.open();
             if (camera == null) return;
             setParameters();
+            camera.setDisplayOrientation(90);
             camera.setPreviewDisplay(surfaceHolder);
             camera.setPreviewCallback(this);
             camera.startPreview();
@@ -69,6 +79,7 @@ public abstract class CameraView extends SurfaceView implements
         parameters = camera.getParameters();
         size = getSupportedPreviewSizes();
         parameters.setPictureSize(size.width,size.height);
+        parameters.setFocusMode("auto");
         camera.setParameters(parameters);
     }
 
@@ -119,7 +130,18 @@ public abstract class CameraView extends SurfaceView implements
 
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
-        initCamera();
+        RequestPermission.request((AppCompatActivity) getContext(),
+                new String[]{Manifest.permission.CAMERA}, 1, new RequestResult() {
+                    @Override
+                    public void onSuccess() {
+                        initCamera();
+                    }
+
+                    @Override
+                    public void onFail(String[] failList) {
+
+                    }
+                });
     }
 
     @Override
@@ -135,6 +157,10 @@ public abstract class CameraView extends SurfaceView implements
     @Override
     public void onPreviewFrame(byte[] bytes, Camera camera) {
         scan(bytes);
+    }
+
+    void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        RequestPermission.onRequestPermissionsResult(requestCode,permissions,grantResults);
     }
 
     public abstract void onSuccess(String result, Bitmap bitmap);

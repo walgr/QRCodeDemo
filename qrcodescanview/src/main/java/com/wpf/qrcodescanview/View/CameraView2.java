@@ -252,35 +252,6 @@ abstract class CameraView2 extends SurfaceView implements
         return largest;
     }
 
-    private void scamImage() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (mCameraDevice != null) {
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        if(mSession != null) {
-                            previewBuilder.addTarget(mImageReader.getSurface());
-                            mSession.setRepeatingRequest(previewBuilder.build(),
-                                    new CameraCaptureSession.CaptureCallback() {}, handler);
-                        }
-                    } catch (CameraAccessException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-    }
-
     @Override
     public void surfaceRedrawNeeded(SurfaceHolder surfaceHolder) {
 
